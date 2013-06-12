@@ -1,0 +1,317 @@
+<?php
+
+/*
+ * @file
+ * Allows you to access the bbs-scene.org api through Drupal 7.
+ * You must have an account with http://bbs-scene.org to use this module.
+ * 
+ * Copyleft 2013 sk5 <sk5@bbs.godta.com>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ * 
+ */
+ 
+include_once('bbs_scene.inc.php'); // bbs-scene.org functions
+
+/**
+ * Implements hook_help().
+ */
+
+function bbs_scene_help($path, $arg) {
+  $output = '';
+	
+  switch ($path) {
+    case 'admin/help#bbs_scene':
+      $output .= t('The bbs-scene.org module allows you to access the bbs-scene.org api through Drupal 7.');
+      break;
+
+	case 'admin/config/modules#description':
+	  $output .= t('bbs-scene.org api module for Drupal 7.');
+	  break;
+
+	case 'admin/config/services/bbs-scene/settings':
+	  $output .= t('Settings for bbs-scene.org for Drupal 7.');
+	  break;
+	
+	case 'admin/config/bbs/bbs-scene/settings':
+	  $output .= t('Settings for bbs-scene.org for Drupal 7.');
+	  break;
+  }
+
+  return $output;
+}
+
+/*
+ * Implements hook_permission().
+ */
+function bbs_scene_permission() {
+  return array(
+    'administrate bbs_scene' => array(
+      'title' => t('Administrate bbs-scene.org api for Drupal 7'),
+      'description' => t('Allow users to administer bbs-scene.org api for Drupal 7'),
+    ),
+  );
+}
+
+/**
+ * Check to see if they have access
+ */
+
+function bbs_scene_access() {
+  return user_access('administrate bbs_scene');
+}
+
+/**
+ * Implements hook_menu().
+ */
+
+function bbs_scene_menu() {
+  
+  $items['admin/config/services/bbs-scene/settings'] = array(
+    'title' => 'bbs-scene.org settings',
+    'description' => 'Configure bbs-scene.org api.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bbs_scene_options'),
+    'access arguments' => array('administrate bbs_scene'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['admin/config/services/bbs/bbs-scene'] = array(
+    'title' => 'bbs-scene.org settings',
+    'description' => 'Configure bbs-scene.org ',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bbs_scene_options'),
+    'access arguments' => array('administrate bbs_scene'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
+  $items['admin/config/services/bbs/bbs-scene/settings'] = array(
+    'title' => 'bbs-scene.org api',
+    'description' => 'Configure bbs-scene.org api.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bbs_scene_options'),
+    'access arguments' => array('administrate bbs_scene'),
+    'type' => MENU_LOCAL_TASK,
+  );
+
+
+  return $items;
+}
+
+/**
+ * Creates the settings menu at admin/config/services/bbs-scene/settings
+ */
+
+function bbs_scene_options() {
+
+  drupal_set_title('bbs-scene.org api configuration');
+
+  $form['bbs_scene_email'] = array(
+    '#title' => t('bbs-scene.org Login Email'),
+	'#type' => 'textfield',
+	'#description' => t('The email address you use to login to bbs-scene.org'),
+	'#default_value' => variable_get('bbs_scene_email', 'email@bbs-scene.org'),
+	'#required' => TRUE,
+  );
+
+  $form['bbs_scene_password'] = array(
+	'#title' => t('bbs-scene.org Password'),
+	'#type' => 'password',
+	'#description' => t('The password you use to login to bbs-scene.org'),
+	'#default_value' => variable_get('bbs_scene_password', 'bbs-scene.org password'),
+	'#value' => variable_get('bbs_scene_password', 'bbs-scene.org password'),
+	'#required' => TRUE,
+  );
+
+  $form['bbs_scene_onelinerz'] = array(
+	'#title' => t('Number of Onelinerz to Show'),
+	'#type' => 'textfield',
+	'#description' => t('The number of onelinerz you want to retrieve from bbs-scene.org'),
+	'#default_value' => variable_get('bbs_scene_onelinerz', 20),
+  );
+
+  $form['bbs_scene_random_png_size'] = array(
+	'#title' => t('Size of Random Png'),
+	'#type' => 'textfield',
+	'#description' => t('The size in % of the random png to retrieve from bbs-scene.org'),
+	'#default_value' => variable_get('bbs_scene_random_png_size', 35),
+  );
+
+  // Custom validation to make sure the user is entering numbers.
+  
+  $form['#validate'][] = 'bbs_scene_options_validate';
+
+  return system_settings_form($form);
+}
+
+/**
+ * Validate settings for bbs_scene_options
+ */
+
+function bbs_scene_options_validate($form, &$form_state) {
+
+  $bbs_scene_onelinerz  = $form_state['values']['bbs_scene_onelinerz'];
+  $bbs_scene_email		= $form_state['values']['bbs_scene_email'];
+  $bbs_scene_password 	= $form_state['values']['bbs_scene_password'];
+  $random_png_size		= $form_state['values']['bbs_scene_random_png_size'];
+
+  if ($bbs_scene_email == '') { 
+	$form_state['values']['bbs_scene_email'] = variable_get('bbs_scene_email', 'email@bbs-scene.org'); 
+  }
+  else {
+	$form_state['values']['bbs_scene_email'] = $form_state['values']['bbs_scene_email'];
+  }
+
+  if ($bbs_scene_password == '') { 
+	$form_state['values']['bbs_scene_password'] = variable_get('bbs_scene_password', 'bbs-scene.org password'); 
+  } 
+  else {
+	$form_state['values']['bbs_scene_password'] = $form_state['values']['bbs_scene_password'];
+  }
+
+  if (!is_numeric($bbs_scene_onelinerz) || $bbs_scene_onelinerz > 100 || $bbs_scene_onelinerz == 0) {
+	form_set_error('bbs_scene_onelinerz', t('You must enter a number from 1 to 100.'));
+  }
+
+  if (!is_numeric($random_png_size) || $random_png_size > 100 || $random_png_size == 0) {
+	form_set_error('bbs_scene_random_png_size', t('You must enter a number from 1 to 100.'));
+  }
+
+}
+
+/**
+ * Implements hook_block_info().
+ */
+
+function bbs_scene_block_info() {
+
+  $blocks['bbs_scene_onelinerz'] = array(
+	'info' => t('bbs-scene.org Global Onelinerz'),
+	'cache' => DRUPAL_NO_CACHE,
+  );
+
+  $blocks['bbs_scene_onelinerz_last'] = array(
+	'info' => t('bbs-scene.org Global Onelinerz (last)'),
+	'cache' => DRUPAL_NO_CACHE,
+  );
+
+  $blocks['bbs_scene_onelinerz_random'] = array(
+	'info' => t('bbs-scene.org Global Onelinerz (random)'),
+	'cache' => DRUPAL_NO_CACHE,
+  );
+
+  $blocks['bbs_scene_random_png'] = array(
+	'info' => t('bbs-scene.org Random Png'),
+	'cache' => DRUPAL_NO_CACHE,
+  );
+
+  $blocks['bbs-scene_bbslist'] = array(
+	'info' => t('bbs-scene.org BBSList'),
+	'cache' => DRUPAL_NO_CACHE,
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ *
+ * The magic happens here.
+ */
+
+function bbs_scene_block_view($delta = '') {
+	
+  $block = array();
+
+  // Set the variables for the bbs-scene.org api
+
+  global $bbs_scene;
+
+  $bbs_scene['email']           = variable_get('bbs_scene_email', 'email@bbs-scene.org');
+  $bbs_scene['password']        = variable_get('bbs_scene_password', 'bbs-scene password');
+  $bbs_scene['onelinerz']       = variable_get('bbs_scene_onelinerz', 20);
+  $bbs_scene['random_png_size'] = variable_get('bbs_scene_random_png_size', 35);	
+
+  // Do some checks to make sure they have set their own email and password
+
+  if ($bbs_scene['email'] == 'email@bbs-scene.org') {
+	drupal_set_message(t('Please visit the bbs-scene.org configuration page and set your bbs-scene login email address'), 'error');
+	exit;
+  }
+  elseif ($bbs_scene['password'] == 'bbs-scene password') {
+	drupal_set_message(t('Please visit the bbs-scene.org configuration page and set your bbs-scene login password'), 'error');
+	exit;
+  }
+
+  // Get the correct content to display the block
+
+  switch ($delta) {
+
+	case 'bbs_scene_onelinerz':
+
+		$output = parseOnelinerz($bbs_scene['email'], $bbs_scene['password'], $bbs_scene['onelinerz']);
+
+		$block['subject'] = t('bbs-scene.org Global Onelinerz');
+		$block['content'] = $output;
+		break;
+
+	case 'bbs_scene_onelinerz_last':
+
+		$output = parseOnelinerz($bbs_scene['email'], $bbs_scene['password'], $bbs_scene['onelinerz'], TRUE, FALSE);
+
+		$block['subject'] = t('bbs-scene.org Global Onelinerz (last)');
+		$block['content'] = $output;
+		break;
+
+	case 'bbs_scene_onelinerz_random':
+
+		$output = parseOnelinerz($bbs_scene['email'], $bbs_scene['password'], $bbs_scene['onelinerz'], FALSE, TRUE);
+
+		$block['subject'] = t('bbs-scene.org Global Onelinerz (random)');
+		$block['content'] = $output;
+		break;
+
+	case 'bbs_scene_random_png':
+
+		$output = randomPng($bbs_scene['email'], $bbs_scene['password'], $bbs_scene['random_png_size']);
+
+		$block['subject'] = t('bbs-scene.org Random Png');
+		$block['content'] = $output;
+		break;
+
+	case 'bbs-scene_bbslist':
+
+		drupal_add_js('/' . drupal_get_path('module','bbs_scene') . '/js/tablesorter/jquery.tablesorter.js', array('scope' => 'header', 'weight' => 8) );
+		drupal_add_js('/' . drupal_get_path('module','bbs_scene') . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.js', array('scope' => 'header', 'weight' => 9) );
+		drupal_add_css('/' . drupal_get_path('module','bbs_scene') . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.css');
+		drupal_add_js('/' . drupal_get_path('module','bbs_scene') . '/js/tablesorter/bbslist.js');
+
+		$output = bbslist($bbs_scene['email'], $bbs_scene['password']);
+
+		
+
+		$block['subject'] = t('bbs-scene.org BBSList');
+		$block['content'] = $output;
+		break;
+  }
+
+  return $block;
+
+}
+
+
+
+

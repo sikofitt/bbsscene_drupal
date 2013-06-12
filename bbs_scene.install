@@ -1,0 +1,27 @@
+<?php 
+
+/**
+ * Implementation of hook_install().
+ */
+ 
+function bbs_scene_onlinerz_install() { // Set default variables
+
+	variable_set('bbs_scene_email', 'email@bbs-scene.org');
+	variable_set('bbs_scene_password', 'bbs-scene password');
+	variable_set('bbs_scene_onelinerz', 20);
+	variable_set('bbs_scene_random_png_size', 35);
+
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+
+function bbs_scene_onelinerz_uninstall() { // Delete onelinerz variables
+
+	variable_delete('bbs_scene_email');
+	variable_delete('bbs_scene_password');
+	variable_delete('bbs_scene_onelinerz');
+	variable_delete('bbs_scene_random_png_size');
+	
+}
