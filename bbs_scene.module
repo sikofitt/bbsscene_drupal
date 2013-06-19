@@ -67,7 +67,17 @@ function bbs_scene_permission() {
 }
 
 /**
- * Check to see if they have access
+ * Implements hook_init().
+ */
+
+function bbs_scene_init() {
+
+  $path = drupal_get_path('module', 'bbs_scene');
+  drupal_add_js($path . '/js/bbs_scene.js');
+  drupal_add_js(array('bbs_scene' => array('path' => '/' . $path . '/')), 'setting');
+}
+/**
+ * Check to see if they have access hook_access()
  */
 
 function bbs_scene_access() {
