@@ -1,9 +1,7 @@
 <?php
 
-define('BS_CLASS_VERSION', 1.00);
+define('BS_CLASS_VERSION', 0.7);
 define('BS_URL',  'bbs-scene.org/api/');
-
-//$isDrupal = ( defined('DRUPAL_BOOTSTRAP') && defined('VERSION') && substr(VERSION, 0,-3) == '7' ? TRUE : FALSE );
 
 function isDrupal() {
 
@@ -18,6 +16,8 @@ function isDrupal() {
   return $isDrupal;  
   
 }
+
+global $isDrupal = isDrupal();
 
 class _BS {
 
