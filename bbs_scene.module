@@ -73,7 +73,7 @@ function bbs_scene_init() {
   
   
   
-  module_load_include('inc', 'bbs_scene', 'bbs_scene');
+  //module_load_include('inc', 'bbs_scene', 'bbs_scene');
   module_load_include('inc', 'bbs_scene', 'bbsscene.class'); // Load bbs-scene class
   
   drupal_add_js( drupal_get_path('module', 'bbs_scene') . '/js/bbs_scene.js' );
@@ -84,15 +84,6 @@ function bbs_scene_init() {
       ) 
     ), 'setting');
   
-  drupal_add_html_head( // Make sure robots don't overwhelm the api
-    array(
-      '#tag' => 'meta', 
-      '#attributes' => array(
-        'name' => 'robots', 
-        'content' => 'noindex, nofollow',
-      ),
-    ), 'meta');
-
 }
 /**
  * Check to see if they have access hook_access()
@@ -411,7 +402,16 @@ function bbs_scene_block_view($delta = '') {
     
     
 	case 'bbs-scene_bbslist':
-
+    
+    drupal_add_html_head( // Make sure robots don't overwhelm the api
+    array(
+      '#tag' => 'meta', 
+      '#attributes' => array(
+        'name' => 'robots', 
+        'content' => 'noindex, nofollow',
+      ),
+    ), 'meta');
+    
 		drupal_add_js('/' . drupal_get_path('module','bbs_scene') . '/js/tablesorter/jquery.tablesorter.js', array('scope' => 'header', 'weight' => 8) );
 		drupal_add_js('/' . drupal_get_path('module','bbs_scene') . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.js', array('scope' => 'header', 'weight' => 9) );
 		drupal_add_css('/' . drupal_get_path('module','bbs_scene') . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.css');
