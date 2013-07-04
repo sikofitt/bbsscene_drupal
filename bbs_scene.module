@@ -75,6 +75,16 @@ function bbs_scene_init() {
   $path = drupal_get_path('module', 'bbs_scene');
   drupal_add_js($path . '/js/bbs_scene.js');
   drupal_add_js(array('bbs_scene' => array('path' => '/' . $path . '/')), 'setting');
+  
+  drupal_add_html_head( // Make sure robots don't overwhelm the api
+    array(
+      '#tag' => 'meta', 
+      '#attributes' => array(
+        'name' => 'robots', 
+        'content' => 'noindex, nofollow',
+      ),
+    ), 'meta');
+
 }
 /**
  * Check to see if they have access hook_access()
