@@ -56,7 +56,7 @@ class _BS {
     $this->json = $j;
   }
   
-  public function getData($t = 'one', $json = $this->json, $m = $this->maxOL ) {
+  public function getData($t = 'one', $json = TRUE, $m = 20 ) {
     
     switch($t): 
       case 'one':
@@ -64,19 +64,23 @@ class _BS {
         break;
       case 'bbslist':
         $url = ($json == TRUE ? BS_URL . 'bbslistjson.php' : BS_URL . 'bbslist.php' );
+        break;
       case 'rBBSList':
         $url = ($json == TRUE ? BS_URL . 'bbslistjson.php?random' : BS_URL . 'bbslist.php?random' );
+        break;
       case 'rOne':
         $url = ($json == TRUE ? BS_URL . 'onelinerzjson?random' : BS_URL . 'onelinerz?random' );
+        break;
     endswitch;
     
     if( isDrupal() ):
-      $auth = urlencode($this->email) . ':' . $this->password;
-      $request = drupal_http_request( 
-        url('http://' . $auth . '@' . $url, 
+
+      $auth = $this->email . ':' . $this->password;
+      $request = drupal_http_request( url('http://' . $auth . '@' . $url, 
           Array( 'external' => TRUE, 'absolute' => TRUE )
         ) 
-      );
+      );     
+      
       $data = $request->data;
     
     else:
@@ -98,11 +102,13 @@ class _BS {
   }
   
   public function rOneL() { // Return stdClass of random oneliner
-    return json_decode($this->getData('rOne', TRUE);
+    $d = (array) json_decode( $this->getData('rOne', TRUE) );
+    return (object) $d[0];
   }
   
   public function one() { // Return stdClass of the last posted oneliner
-    return json_decode($this->getData('rOne', TRUE, 1);
+    $d = (array) json_decode( $this->getData('one', TRUE, 1) );
+    return (object) $d[0];
   }
   
   public function oneLRawXML() { // Return $this->maxOL in raw XML
@@ -115,37 +121,22 @@ class _BS {
   
   }
   
-  public static function bbsList() { // Return stdClass of entire bbslist
+  public function bbsList() { // Return stdClass of entire bbslist
   
-    return json_decode($this->getData('bbslist', TRUE));
+    return (object) json_decode($this->getData('bbslist', TRUE));
   }
   
   public function bbsListRawXML() { // Return raw XML of bbslist
   
-    return $this->getData('bbslist');
+    return $this->getData('bbslist', FALSE);
   
   }
   public function bbsListRawJson() { // Return raw jSON of bbslist
-    $arr = FALSE;
-    return ($arr ? (array) : (object) ) $this->getData('bbslist', TRUE);
+    
+    return $this->getData('bbslist', TRUE);
   
   }
  
 }
 
-$bbs = new _BS();
-$bbs->setEmail('sikofitt@gmail.com');
-$bbs->setPassword('Godtabb5');
-$bbs->setMaxOL(5);
-$onel = $bbs->oneLRawJson();
-print($onel);
-/*
-foreach($onel as $entry):
-  
-  print $entry->bbsname . $bbs->NL;
-  
-  print '--------------------------------------------' . $bbs->NL;
-
-endforeach;
-*/
 ?>
