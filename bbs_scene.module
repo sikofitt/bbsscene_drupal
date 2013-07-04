@@ -71,16 +71,15 @@ function bbs_scene_permission() {
 
 function bbs_scene_init() {
   
+  global $base_url;
   
-  
-  //module_load_include('inc', 'bbs_scene', 'bbs_scene');
   module_load_include('inc', 'bbs_scene', 'bbsscene.class'); // Load bbs-scene class
   
   drupal_add_js( drupal_get_path('module', 'bbs_scene') . '/js/bbs_scene.js' );
   drupal_add_js( // Pass bbs-scene module path to javascript
     array(
       'bbs_scene' => array(
-        'path' => '/' . drupal_get_path('module', 'bbs_scene') . '/'
+        'path' => $base_url . '/' . drupal_get_path('module', 'bbs_scene') . '/'
       ) 
     ), 'setting');
   
