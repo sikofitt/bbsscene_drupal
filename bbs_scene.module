@@ -24,8 +24,7 @@
  * 
  */
  
-include_once('bbs_scene.inc.php'); // bbs-scene.org functions
-include_once('bbsscene.class.inc.php'); // new class
+
 /**
  * Implements hook_help().
  */
@@ -71,10 +70,12 @@ function bbs_scene_permission() {
  */
 
 function bbs_scene_init() {
-
-  $path = drupal_get_path('module', 'bbs_scene');
-  drupal_add_js($path . '/js/bbs_scene.js');
-  drupal_add_js(array('bbs_scene' => array('path' => '/' . $path . '/')), 'setting');
+  
+  module_load_include('inc', 'bbs_scene', 'bbs_scene');
+  module_load_include('inc', 'bbs_scene', 'bbsscene.class');
+  
+  drupal_add_js( drupal_get_path('module', 'bbs_scene') . '/js/bbs_scene.js' );
+  drupal_add_js(array('bbs_scene' => array('path' => '/' . drupal_get_path('module', 'bbs_scene') . '/') ), 'setting');
   
   drupal_add_html_head( // Make sure robots don't overwhelm the api
     array(
