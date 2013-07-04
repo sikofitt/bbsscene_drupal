@@ -71,11 +71,18 @@ function bbs_scene_permission() {
 
 function bbs_scene_init() {
   
+  
+  
   module_load_include('inc', 'bbs_scene', 'bbs_scene');
-  module_load_include('inc', 'bbs_scene', 'bbsscene.class');
+  module_load_include('inc', 'bbs_scene', 'bbsscene.class'); // Load bbs-scene class
   
   drupal_add_js( drupal_get_path('module', 'bbs_scene') . '/js/bbs_scene.js' );
-  drupal_add_js(array('bbs_scene' => array('path' => '/' . drupal_get_path('module', 'bbs_scene') . '/') ), 'setting');
+  drupal_add_js( // Pass bbs-scene module path to javascript
+    array(
+      'bbs_scene' => array(
+        'path' => '/' . drupal_get_path('module', 'bbs_scene') . '/'
+      ) 
+    ), 'setting');
   
   drupal_add_html_head( // Make sure robots don't overwhelm the api
     array(
@@ -240,9 +247,16 @@ function bbs_scene_theme() {
     'onelinerz' => array(
     'variables' => array(
       'onelinerz' => NULL,
+      'i' => NULL,
       'delta' => NULL
 	  ),
     'template' => 'templates/onelinerz',
+    ),
+    'bbslistr' => array(
+    'variables' => array(
+      'entry' => NULL,
+	  ),
+    'template' => 'templates/bbslistr',
     ),
   );
 }
@@ -269,7 +283,7 @@ function bbs_scene_block_info() {
   );
 
   $blocks['bbs_scene_random_png'] = array(
-	'info' => t('bbs-scene.org Random Png'),
+	'info' => t('bbs-scene.org random bbs'),
 	'cache' => DRUPAL_NO_CACHE,
   );
 
@@ -294,7 +308,8 @@ function bbs_scene_block_view($delta = '') {
   // Set the variables for the bbs-scene.org api
 
   global $bbs_scene;
-
+  global $base_url;
+  
   $bbs_scene['email']           = variable_get('bbs_scene_email', 'email@bbs-scene.org');
   $bbs_scene['password']        = variable_get('bbs_scene_password', 'bbs-scene password');
   $bbs_scene['onelinerz']       = variable_get('bbs_scene_onelinerz', 20);
@@ -322,10 +337,21 @@ function bbs_scene_block_view($delta = '') {
 
 	case 'bbs_scene_onelinerz':
 
-		$output = parseOnelinerz($bbs_scene['email'], $bbs_scene['password'], $bbs_scene['onelinerz']);
-
+		$o = $bbs->oneL();
+    
+    $i = Array(
+      'header' => $base_url . '/' . drupal_get_path('module', 'bbs_scene').'/images/onelinerz_hdr.png',
+      'footer' => $base_url . '/' . drupal_get_path('module', 'bbs_scene').'/images/onelinerz_ftr.png'
+    );
+    
 		$block['subject'] = t('bbs-scene.org Global Onelinerz');
-		$block['content'] = $output;
+		$block['content'] = theme('onelinerz', 
+      array(
+        'onelinerz' => $o,
+        'i' => (object) $i,
+        'delta' => $delta
+      )
+    );
 		break;
 
 	case 'bbs_scene_onelinerz_last':
@@ -365,10 +391,22 @@ function bbs_scene_block_view($delta = '') {
 
 	case 'bbs_scene_random_png':
 
-		$output = randomPng($bbs_scene['email'], $bbs_scene['password'], $bbs_scene['random_png_size']);
-
-		$block['subject'] = t('bbs-scene.org Random Png');
-		$block['content'] = $output;
+		//$output = randomPng($bbs_scene['email'], $bbs_scene['password'], $bbs_scene['random_png_size']);
+    $e = $bbs->rBBSList();
+    
+    if(empty($e->png) || $e->png == 'NONE'):
+      $e->png = $base_url . '/' . drupal_get_path('module', 'bbs_scene') . '/images/noimg.png';
+      $e->hasImg = FALSE;
+    else:
+      $e->png = $e->png . '&size=' . $bbs_scene['random_png_size'];
+      $e->hasImg = TRUE;
+    endif;
+		$block['subject'] = t('bbs-scene.org random bbs');
+		$block['content'] = theme('bbslistr', 
+      array(
+        'entry' => $e,
+      )
+    );
 		break;
     
     

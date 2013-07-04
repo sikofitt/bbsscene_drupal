@@ -18,4 +18,4 @@
 	<span class="seperator">@</span>
 	<span class="oneliner_bbsname"><?php print $bbsname; ?></span>
 	<span class="oneliner"><?php print preg_replace('/[|][0-9][0-9]/','', $oneliner); ?></span>
-</div>
+</div> <!-- /#<?php print $delta; ?> -->
