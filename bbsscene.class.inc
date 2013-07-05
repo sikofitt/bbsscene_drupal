@@ -7,17 +7,14 @@ function isDrupal() {
 
   if( defined('DRUPAL_ROOT') ):
     if( defined('VERSION') && substr(VERSION, 0, -3) == '7'):
-      $isDrupal = TRUE;
+      return TRUE;
     endif;
   else:
-    $isDrupal = FALSE;
+    return FALSE;
   endif;
-  
-  return $isDrupal;  
-  
 }
 
-global $isDrupal = isDrupal();
+$isDrupal = isDrupal();
 
 class _BS {
 
@@ -62,14 +59,14 @@ class _BS {
       case 'one':
         $url = ($json == TRUE ? BS_URL . 'onelinerzjson?limit=' . $m : BS_URL . 'onelinerz?limit=' . $m );
         break;
+      case 'rOne':
+        $url = ($json == TRUE ? BS_URL . 'onelinerzjson?random' : BS_URL . 'onelinerz?random' );
+        break;
       case 'bbslist':
         $url = ($json == TRUE ? BS_URL . 'bbslistjson.php' : BS_URL . 'bbslist.php' );
         break;
       case 'rBBSList':
         $url = ($json == TRUE ? BS_URL . 'bbslistjson.php?random' : BS_URL . 'bbslist.php?random' );
-        break;
-      case 'rOne':
-        $url = ($json == TRUE ? BS_URL . 'onelinerzjson?random' : BS_URL . 'onelinerz?random' );
         break;
     endswitch;
     
@@ -84,6 +81,7 @@ class _BS {
       $data = $request->data;
     
     else:
+    
       $auth = $this->email . ':' . $this->password;
       $c = curl_init($url); // Initialize curl and set curl options
       curl_setopt($c, CURLOPT_USERPWD, "$auth");
@@ -92,18 +90,23 @@ class _BS {
       $request = curl_exec($c);
       curl_close($c);
       $data = $request;
+    
     endif;
     
     return $data;
   }
   
   public function oneL() { // Return stdClass of $this->maxOL onelinerz (Defaults to 20)
-    return json_decode($this->getData('one', TRUE, $this->maxOL));
+    if($isDrupal):
+      return (object) drupal_jason_decode( $this->getData( 'one', TRUE, $this->maxOL ) )->data;
+    else:
+      return json_decode($this->getData('one', TRUE, $this->maxOL));
+    endif;
   }
   
   public function rOneL() { // Return stdClass of random oneliner
-    $d = (array) json_decode( $this->getData('rOne', TRUE) );
-    return (object) $d[0];
+    $data = (array) json_decode( $this->getData('rOne', TRUE) );
+    return (object) $data[0];
   }
   
   public function one() { // Return stdClass of the last posted oneliner
