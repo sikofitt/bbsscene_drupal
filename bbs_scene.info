@@ -3,7 +3,6 @@ description = bbs-scene.org api for Drupal 7
 core = 7.x
 package = BBS
 dependencies[] = block
-files[] = bbs-scene.inc.php
 files[] = bbs-scene.module
 stylesheets[all][] = css/bbs_scene.css
 configure = admin/config/bbs/bbs-scene/settings
