@@ -300,6 +300,8 @@ function bbs_scene_block_view($delta = '') {
   global $bbs_scene;
   global $base_url;
   
+  $mod_path = drupal_get_path('module', 'bbs_scene');
+  
   $bbs_scene['email']           = variable_get('bbs_scene_email', 'email@bbs-scene.org');
   $bbs_scene['password']        = variable_get('bbs_scene_password', 'bbs-scene password');
   $bbs_scene['onelinerz']       = variable_get('bbs_scene_onelinerz', 20);
@@ -330,8 +332,8 @@ function bbs_scene_block_view($delta = '') {
 		$o = $bbs->oneL();
     
     $i = Array(
-      'header' => $base_url . '/' . drupal_get_path('module', 'bbs_scene').'/images/onelinerz_hdr.png',
-      'footer' => $base_url . '/' . drupal_get_path('module', 'bbs_scene').'/images/onelinerz_ftr.png'
+      'header' => $base_url . '/' . $mod_path .'/images/onelinerz_hdr.png',
+      'footer' => $base_url . '/' . $mod_path .'/images/onelinerz_ftr.png'
     );
     
 		$block['subject'] = t('bbs-scene.org Global Onelinerz');
@@ -381,7 +383,6 @@ function bbs_scene_block_view($delta = '') {
 
 	case 'bbs_scene_random_png':
 
-		//$output = randomPng($bbs_scene['email'], $bbs_scene['password'], $bbs_scene['random_png_size']);
     $e = $bbs->rBBSList();
     
     if(empty($e->png) || $e->png == 'NONE'):
@@ -411,12 +412,12 @@ function bbs_scene_block_view($delta = '') {
       ),
     ), 'meta');
     
-		drupal_add_js('/' . drupal_get_path('module','bbs_scene') . '/js/tablesorter/jquery.tablesorter.js', array('scope' => 'header', 'weight' => 8) );
-		drupal_add_js('/' . drupal_get_path('module','bbs_scene') . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.js', array('scope' => 'header', 'weight' => 9) );
-		drupal_add_css('/' . drupal_get_path('module','bbs_scene') . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.css');
-		drupal_add_js('/' . drupal_get_path('module','bbs_scene') . '/js/tablesorter/bbslist.js');
+		drupal_add_js('/' . $mod_path . '/js/tablesorter/jquery.tablesorter.js', array('scope' => 'header', 'weight' => 8) );
+		drupal_add_js('/' . $mod_path . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.js', array('scope' => 'header', 'weight' => 9) );
+		drupal_add_css('/' . $mod_path . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.css');
+		drupal_add_js('/' . $mod_path . '/js/tablesorter/bbslist.js');
     
-    $arrow_path = drupal_get_path('module', 'bbs_scene') . "/images/arrows/";
+    $arrow_path = $mod_path . "/images/arrows/";
     $arrow = array(
       'first' => $arrow_path . 'first-32.png',
       'last'  => $arrow_path . 'last-32.png',
