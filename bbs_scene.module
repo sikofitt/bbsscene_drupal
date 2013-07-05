@@ -363,11 +363,10 @@ function bbs_scene_block_view($delta = '') {
     );
 		break;
 
-	case 'bbs_scene_onelinerz_random':
+  case 'bbs_scene_onelinerz_random':
 
     $o = $bbs->rOneL();
-    
-    $output = 
+
 		$block['subject'] = t('bbs-scene.org Global Onelinerz (random)');
 		$block['content'] = theme('oneliner', 
       array(
@@ -379,9 +378,9 @@ function bbs_scene_block_view($delta = '') {
         'delta' => $delta
       )
     );
-		break;
+    break;
 
-	case 'bbs_scene_random_png':
+  case 'bbs_scene_random_png':
 
     $e = $bbs->rBBSList();
     
