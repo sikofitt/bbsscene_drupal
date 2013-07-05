@@ -3,7 +3,7 @@
 define('BS_CLASS_VERSION', 0.7);
 define('BS_URL',  'bbs-scene.org/api/');
 
-function isDrupal() {
+function isDrupal() { // Check to see if we should use drupal wrapper functions or php functions
 
   if( defined('DRUPAL_ROOT') ):
     if( defined('VERSION') && substr(VERSION, 0, -3) == '7'):
@@ -14,8 +14,6 @@ function isDrupal() {
   endif;
 }
 
-$isDrupal = isDrupal();
-
 class _BS {
 
   public $email;
@@ -23,7 +21,7 @@ class _BS {
   public $NL;
   public $maxOL = 20;
   public $json = TRUE;
-
+  
   public function __construct() {
     $this->NL = "\n";
   }
@@ -99,7 +97,7 @@ class _BS {
   }
   
   public function oneL() { // Return stdClass of $this->maxOL onelinerz (Defaults to 20)
-    if($isDrupal):
+    if( isDrupal() ):
       return (object) drupal_jason_decode( $this->getData( 'one', TRUE, $this->maxOL ) );
     else:
       return json_decode($this->getData('one', TRUE, $this->maxOL));
@@ -107,7 +105,7 @@ class _BS {
   }
   
   public function rOneL() { // Return stdClass of random oneliner
-    if($isDrupal):
+    if( isDrupal() ):
       $data = (array) drupal_json_decode( $this->getData('rOne', TRUE) );
     else:
       $data = (array) json_decode( $this->getData('rOne', TRUE) );
@@ -117,8 +115,13 @@ class _BS {
   }
   
   public function one() { // Return stdClass of the last posted oneliner
-    $d = (array) json_decode( $this->getData('one', TRUE, 1) );
-    return (object) $d[0];
+    if( isDrupal() ):
+      $data = (array) drupal_json_decode( $this->getData('one', TRUE, 1) );
+    else:
+      $data = (array) json_decode( $this->getData('one', TRUE, 1) );
+    endif;
+    
+    return (object) $data[0];
   }
   
   public function oneLRawXML() { // Return $this->maxOL in raw XML
@@ -126,20 +129,25 @@ class _BS {
   }
   
   public function oneLRawJson() { // Return $this->maxOL in raw jSON
-  
     return $this->getData('one', TRUE, $this->maxOL);
-  
   }
   
   public function bbsList() { // Return stdClass of entire bbslist
-  
-    return (object) json_decode($this->getData('bbslist', TRUE));
+    if( isDrupal() ):
+      return (object) drupal_json_decode($this->getData('bbslist', TRUE));
+    else:
+      return (object) json_decode($this->getData('bbslist', TRUE));
+    endif;
   }
   
   public function rBBSList() { // Return stdClass of random bbslist entry
-    $br = (array) json_decode($this->getData('rBBSList', TRUE));
-    $data = $br[0];
-    return (object) $data; 
+    if( isDrupal() ):
+      $data = (array) drupal_json_decode($this->getData('rBBSList', TRUE));
+    else:
+      $data = (array) json_decode($this->getData('rBBSList', TRUE));
+    endif;
+    
+    return (object) $data[0]; 
   }
   
   public function bbsListRawXML() { // Return raw XML of bbslist
