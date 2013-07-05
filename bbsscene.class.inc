@@ -25,11 +25,8 @@ class _BS {
   public $json = TRUE;
 
   public function __construct() {
-    
     $this->NL = "\n";
-    
   }
-  
  /*
   * @param $e (email to login to bbs-scene.org)
   */
@@ -48,11 +45,17 @@ class _BS {
   public function setMaxOL($n = 20) {
     $this->maxOL = $n;
   } 
-  
+  /*
+  * @param $j (Return jason or xml default TRUE)
+  */
   public function jSON($j = TRUE) {
     $this->json = $j;
   }
-  
+  /*
+  * @param $t ( which data to return onelinerz, random onliner, bbslist, random bbs entry )
+  * @param $json ( return jSON or xml, defaults to jSON )
+  * @param $m ( the number of onelinerz to return, defaults to 20 )
+  */
   public function getData($t = 'one', $json = TRUE, $m = 20 ) {
     
     switch($t): 
@@ -78,7 +81,7 @@ class _BS {
         ) 
       );     
       
-      $data = $request->data;
+      return $request->data;
     
     else:
     
@@ -89,23 +92,27 @@ class _BS {
       curl_setopt($c, CURLOPT_HEADER, 0);
       $request = curl_exec($c);
       curl_close($c);
-      $data = $request;
-    
+      
+      return $request;
+   
     endif;
-    
-    return $data;
   }
   
   public function oneL() { // Return stdClass of $this->maxOL onelinerz (Defaults to 20)
     if($isDrupal):
-      return (object) drupal_jason_decode( $this->getData( 'one', TRUE, $this->maxOL ) )->data;
+      return (object) drupal_jason_decode( $this->getData( 'one', TRUE, $this->maxOL ) );
     else:
       return json_decode($this->getData('one', TRUE, $this->maxOL));
     endif;
   }
   
   public function rOneL() { // Return stdClass of random oneliner
-    $data = (array) json_decode( $this->getData('rOne', TRUE) );
+    if($isDrupal):
+      $data = (array) drupal_json_decode( $this->getData('rOne', TRUE) );
+    else:
+      $data = (array) json_decode( $this->getData('rOne', TRUE) );
+    endif;
+    
     return (object) $data[0];
   }
   
@@ -129,7 +136,7 @@ class _BS {
     return (object) json_decode($this->getData('bbslist', TRUE));
   }
   
-  public function rBBSList() { // Return stdClass of entire bbslist
+  public function rBBSList() { // Return stdClass of random bbslist entry
     $br = (array) json_decode($this->getData('rBBSList', TRUE));
     $data = $br[0];
     return (object) $data; 
