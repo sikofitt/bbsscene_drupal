@@ -318,16 +318,25 @@ function bbs_scene_block_view($delta = '') {
 	exit;
   }
 
-  
-  $bbs = new _BS();
-  $bbs->setEmail($bbs_scene['email']);
-  $bbs->setPassword($bbs_scene['password']);
-  $bbs->jSON(TRUE);
-  $bbs->setMaxOL($bbs_scene['onelinerz']);
+  if( class_exists('_BS') ): // Check that bbs-scene class is loaded.
+    $bbs = new _BS();
+    $bbs->setEmail($bbs_scene['email']);
+    $bbs->setPassword($bbs_scene['password']);
+    $bbs->setMaxOL($bbs_scene['onelinerz']);
+  else:
+    $delta = 'bbs_scene_error';
+  endif;
   
   switch ($delta) {
-
-	case 'bbs_scene_onelinerz':
+  case 'bbs_scene_error':
+  
+    $url = '<a href="'. url('http://4bbs.us/bs_class', array('external'=>TRUE, 'absolute'=>TRUE) ) .'" title="bbs-scene.org api php class" target="_blank">http://4bbs.us/bs_class</a>';
+    
+    $block['subject'] = t('bbs-scene module error');
+    $block['content'] = drupal_set_message( 'The BBS scene class does not exist, download from ' . $url, 'error');
+    break;
+  
+  case 'bbs_scene_onelinerz':
 
 		$o = $bbs->oneL();
     
