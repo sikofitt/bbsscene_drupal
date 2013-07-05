@@ -143,7 +143,7 @@ class _BS {
     if( isDrupal() ):
       return (object) drupal_jason_decode( $this->getData( 'one', TRUE, $this->maxOL ) );
     else:
-      return json_decode($this->getData('one', TRUE, $this->maxOL));
+      return (object) json_decode($this->getData('one', TRUE, $this->maxOL));
     endif;
   }
   
@@ -194,14 +194,11 @@ class _BS {
   }
   
   public function bbsListRawXML() { // Return raw XML of bbslist
-  
     return $this->getData('bbslist', FALSE);
-  
   }
-  public function bbsListRawJson() { // Return raw jSON of bbslist
-    
-    return $this->getData('bbslist', TRUE);
   
+  public function bbsListRawJson() { // Return raw jSON of bbslist
+    return $this->getData('bbslist', TRUE);
   }
  
 }

@@ -30,25 +30,23 @@
  */
 
 function bbs_scene_help($path, $arg) {
+
   $output = '';
 	
-  switch ($path) {
+  switch ($path): 
     case 'admin/help#bbs_scene':
       $output .= t('The bbs-scene.org module allows you to access the bbs-scene.org api through Drupal 7.');
       break;
-
-	case 'admin/config/modules#description':
-	  $output .= t('bbs-scene.org api module for Drupal 7.');
-	  break;
-
-	case 'admin/config/services/bbs-scene/settings':
-	  $output .= t('Settings for bbs-scene.org for Drupal 7.');
-	  break;
-	
-	case 'admin/config/bbs/bbs-scene/settings':
-	  $output .= t('Settings for bbs-scene.org for Drupal 7.');
-	  break;
-  }
+    case 'admin/config/modules#description':
+      $output .= t('bbs-scene.org api module for Drupal 7.');
+      break;
+    case 'admin/config/services/bbs-scene/settings':
+      $output .= t('Settings for bbs-scene.org for Drupal 7.');
+      break;
+    case 'admin/config/bbs/bbs-scene/settings':
+      $output .= t('Settings for bbs-scene.org for Drupal 7.');
+      break;
+  endswitch;
 
   return $output;
 }
@@ -82,7 +80,6 @@ function bbs_scene_init() {
         'path' => $base_url . '/' . drupal_get_path('module', 'bbs_scene') . '/'
       ) 
     ), 'setting');
-  
 }
 /**
  * Check to see if they have access hook_access()
