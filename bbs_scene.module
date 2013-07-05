@@ -180,32 +180,33 @@ function bbs_scene_options() {
 
 function bbs_scene_options_validate($form, &$form_state) {
 
-  $bbs_scene_onelinerz  = $form_state['values']['bbs_scene_onelinerz'];
-  $bbs_scene_email		= $form_state['values']['bbs_scene_email'];
-  $bbs_scene_password 	= $form_state['values']['bbs_scene_password'];
-  $random_png_size		= $form_state['values']['bbs_scene_random_png_size'];
+  if ($form_state['values']['bbs_scene_email'] == ''):
+    $form_state['values']['bbs_scene_email'] = variable_get('bbs_scene_email', 'email@bbs-scene.org'); 
+  else:
+    $form_state['values']['bbs_scene_email'] = $form_state['values']['bbs_scene_email'];
+  endif;
 
-  if ($bbs_scene_email == '') { 
-	$form_state['values']['bbs_scene_email'] = variable_get('bbs_scene_email', 'email@bbs-scene.org'); 
-  }
-  else {
-	$form_state['values']['bbs_scene_email'] = $form_state['values']['bbs_scene_email'];
-  }
+  if ($form_state['values']['bbs_scene_password'] == ''): 
+    $form_state['values']['bbs_scene_password'] = variable_get('bbs_scene_password', 'bbs-scene.org password'); 
+  else:
+    $form_state['values']['bbs_scene_password'] = $form_state['values']['bbs_scene_password'];
+  endif;
 
-  if ($bbs_scene_password == '') { 
-	$form_state['values']['bbs_scene_password'] = variable_get('bbs_scene_password', 'bbs-scene.org password'); 
-  } 
-  else {
-	$form_state['values']['bbs_scene_password'] = $form_state['values']['bbs_scene_password'];
-  }
+  if (
+    !is_numeric($form_state['values']['bbs_scene_onelinerz']) || 
+    $form_state['values']['bbs_scene_onelinerz'] > 100 || 
+    $form_state['values']['bbs_scene_onelinerz'] == 0
+  ):
+    form_set_error('bbs_scene_onelinerz', t('You must enter a number from 1 to 100.'));
+  endif;
 
-  if (!is_numeric($bbs_scene_onelinerz) || $bbs_scene_onelinerz > 100 || $bbs_scene_onelinerz == 0) {
-	form_set_error('bbs_scene_onelinerz', t('You must enter a number from 1 to 100.'));
-  }
-
-  if (!is_numeric($random_png_size) || $random_png_size > 100 || $random_png_size == 0) {
-	form_set_error('bbs_scene_random_png_size', t('You must enter a number from 1 to 100.'));
-  }
+  if (
+    !is_numeric($form_state['values']['bbs_scene_random_png_size']) || 
+    $form_state['values']['bbs_scene_random_png_size'] > 100 || 
+    $form_state['values']['bbs_scene_random_png_size'] == 0
+  ):
+    form_set_error('bbs_scene_random_png_size', t('You must enter a number from 1 to 100.'));
+  endif;
 
 }
 
