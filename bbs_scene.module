@@ -412,10 +412,10 @@ function bbs_scene_block_view($delta = '') {
       ),
     ), 'meta');
     
-		drupal_add_js('/' . $mod_path . '/js/tablesorter/jquery.tablesorter.js', array('scope' => 'header', 'weight' => 8) );
-		drupal_add_js('/' . $mod_path . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.js', array('scope' => 'header', 'weight' => 9) );
-		drupal_add_css('/' . $mod_path . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.css');
-		drupal_add_js('/' . $mod_path . '/js/tablesorter/bbslist.js');
+    drupal_add_js('/' . $mod_path . '/js/tablesorter/jquery.tablesorter.js', array('scope' => 'header', 'weight' => 8) );
+    drupal_add_js('/' . $mod_path . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.js', array('scope' => 'header', 'weight' => 9) );
+    drupal_add_css('/' . $mod_path . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.css');
+    drupal_add_js('/' . $mod_path . '/js/tablesorter/bbslist.js');
     
     $arrow_path = $mod_path . "/images/arrows/";
     $arrow = array(
@@ -437,7 +437,7 @@ function bbs_scene_block_view($delta = '') {
 
   return $block;
 
-}
+} // End Class
 
 
 
