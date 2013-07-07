@@ -215,36 +215,36 @@ function bbs_scene_theme() {
 
   return array(
     'bbslist' => array(
-    'variables' => array(
-      'entries' => NULL,
-      'arrow' => NULL,
-	  ),
-    'template' => 'templates/bbslist',
-    ),
-    'oneliner' => array(
-    'variables' => array(
-      'id' => NULL,
-      'oneliner' => NULL,
-      'alias' => NULL,
-      'bbsname' => NULL,
-      'ts' => NULL,
-      'delta' => NULL
-	  ),
-    'template' => 'templates/oneliner',
-    ),
-    'onelinerz' => array(
-    'variables' => array(
-      'onelinerz' => NULL,
-      'i' => NULL,
-      'delta' => NULL
-	  ),
-    'template' => 'templates/onelinerz',
+      'variables' => array(
+        'entries' => NULL,
+        'arrow' => NULL,
+      ),
+      'template' => 'templates/bbslist',
     ),
     'bbslistr' => array(
-    'variables' => array(
-      'entry' => NULL,
-	  ),
-    'template' => 'templates/bbslistr',
+      'variables' => array(
+        'entry' => NULL,
+      ),
+      'template' => 'templates/bbslistr',
+    ),
+    'oneliner' => array(
+      'variables' => array(
+        'id' => NULL,
+        'oneliner' => NULL,
+        'alias' => NULL,
+        'bbsname' => NULL,
+        'ts' => NULL,
+        'delta' => NULL
+      ),
+      'template' => 'templates/oneliner',
+    ),
+    'onelinerz' => array(
+      'variables' => array(
+        'onelinerz' => NULL,
+        'i' => NULL,
+        'delta' => NULL
+      ),
+      'template' => 'templates/onelinerz',
     ),
   );
 }
@@ -256,28 +256,28 @@ function bbs_scene_theme() {
 function bbs_scene_block_info() {
 
   $blocks['bbs_scene_onelinerz'] = array(
-	'info' => t('bbs-scene.org Global Onelinerz'),
-	'cache' => DRUPAL_NO_CACHE,
+    'info' => t('bbs-scene.org Global Onelinerz'),
+    'cache' => DRUPAL_NO_CACHE,
   );
 
   $blocks['bbs_scene_onelinerz_last'] = array(
-	'info' => t('bbs-scene.org Global Onelinerz (last)'),
-	'cache' => DRUPAL_NO_CACHE,
+    'info' => t('bbs-scene.org Global Onelinerz (last)'),
+    'cache' => DRUPAL_NO_CACHE,
   );
 
   $blocks['bbs_scene_onelinerz_random'] = array(
-	'info' => t('bbs-scene.org Global Onelinerz (random)'),
-	'cache' => DRUPAL_NO_CACHE,
+    'info' => t('bbs-scene.org Global Onelinerz (random)'),
+    'cache' => DRUPAL_NO_CACHE,
   );
 
   $blocks['bbs_scene_random_png'] = array(
-	'info' => t('bbs-scene.org random bbs'),
-	'cache' => DRUPAL_NO_CACHE,
+    'info' => t('bbs-scene.org random bbs'),
+    'cache' => DRUPAL_NO_CACHE,
   );
 
   $blocks['bbs-scene_bbslist'] = array(
-	'info' => t('bbs-scene.org BBSList'),
-	'cache' => DRUPAL_NO_CACHE,
+    'info' => t('bbs-scene.org BBSList'),
+    'cache' => DRUPAL_NO_CACHE,
   );
 
   return $blocks;
@@ -306,16 +306,27 @@ function bbs_scene_block_view($delta = '') {
   $bbs_scene['random_png_size'] = variable_get('bbs_scene_random_png_size', 35);	
 
   // Do some checks to make sure they have set their own email and password
-
-  if ($bbs_scene['email'] == 'email@bbs-scene.org') {
-	drupal_set_message(t('Please visit the bbs-scene.org configuration page and set your bbs-scene login email address'), 'error');
-	exit;
-  }
-  elseif ($bbs_scene['password'] == 'bbs-scene password') {
-	drupal_set_message(t('Please visit the bbs-scene.org configuration page and set your bbs-scene login password'), 'error');
-	exit;
-  }
-
+  
+  $error_msg = '';
+  
+  if ($bbs_scene['email'] == 'email@bbs-scene.org'):
+    $error_msg = t('Please visit the bbs-scene.org configuration page and set your bbs-scene login email address');
+    $no_email = TRUE;
+  else:
+    $no_email = FALSE;
+  endif;
+  
+  if ($bbs_scene['password'] == 'bbs-scene password'):
+    $error_msg .= t('Please visit the bbs-scene.org configuration page and set your bbs-scene login password');
+    $no_password = TRUE;
+  else:
+    $no_password = FALSE;
+	endif;
+  
+  if( $no_email || $no_password ):
+    drupal_set_message($error_msg, 'error');
+  endif;
+  
   if( class_exists('_BS') ): // Check that bbs-scene class is loaded.
     $bbs = new _BS();
     $bbs->setEmail($bbs_scene['email']);
@@ -325,7 +336,8 @@ function bbs_scene_block_view($delta = '') {
     $delta = 'bbs_scene_error';
   endif;
   
-  switch ($delta) {
+  switch ($delta):
+  
   case 'bbs_scene_error':
   
     $url = '<a href="'. url('http://4bbs.us/bs_class', array('external'=>TRUE, 'absolute'=>TRUE) ) .'" title="bbs-scene.org api php class" target="_blank">http://4bbs.us/bs_class</a>';
@@ -336,29 +348,29 @@ function bbs_scene_block_view($delta = '') {
   
   case 'bbs_scene_onelinerz':
 
-		$o = $bbs->oneL();
+    $o = $bbs->oneL();
     
     $i = Array(
       'header' => $base_url . '/' . $mod_path .'/images/onelinerz_hdr.png',
       'footer' => $base_url . '/' . $mod_path .'/images/onelinerz_ftr.png'
     );
     
-		$block['subject'] = t('bbs-scene.org Global Onelinerz');
-		$block['content'] = theme('onelinerz', 
+    $block['subject'] = t('bbs-scene.org Global Onelinerz');
+    $block['content'] = theme('onelinerz', 
       array(
         'onelinerz' => $o,
         'i' => (object) $i,
         'delta' => $delta
       )
     );
-		break;
+    break;
 
-	case 'bbs_scene_onelinerz_last':
+  case 'bbs_scene_onelinerz_last':
 
     $o = $bbs->one();
     
-		$block['subject'] = t('bbs-scene.org Global Onelinerz (last)');
-		$block['content'] = theme('oneliner', 
+    $block['subject'] = t('bbs-scene.org Global Onelinerz (last)');
+    $block['content'] = theme('oneliner', 
       array(
         'oid' => $o->id,
         'oneliner' => $o->oneliner,
@@ -368,14 +380,14 @@ function bbs_scene_block_view($delta = '') {
         'delta' => $delta
       )
     );
-		break;
+    break;
 
   case 'bbs_scene_onelinerz_random':
 
     $o = $bbs->rOneL();
 
-		$block['subject'] = t('bbs-scene.org Global Onelinerz (random)');
-		$block['content'] = theme('oneliner', 
+    $block['subject'] = t('bbs-scene.org Global Onelinerz (random)');
+    $block['content'] = theme('oneliner', 
       array(
         'oid' => $o->id,
         'oneliner' => $o->oneliner,
@@ -398,31 +410,32 @@ function bbs_scene_block_view($delta = '') {
       $e->png = $e->png . '&size=' . $bbs_scene['random_png_size'];
       $e->hasImg = TRUE;
     endif;
-		$block['subject'] = t('bbs-scene.org random bbs');
-		$block['content'] = theme('bbslistr', 
+
+    $block['subject'] = t('bbs-scene.org random bbs');
+    $block['content'] = theme('bbslistr', 
       array(
         'entry' => $e,
       )
     );
-		break;
-    
-    
-	case 'bbs-scene_bbslist':
-    
+    break;
+
+  case 'bbs-scene_bbslist':
+
     drupal_add_html_head( // Make sure robots don't overwhelm the api
-    array(
-      '#tag' => 'meta', 
-      '#attributes' => array(
-        'name' => 'robots', 
-        'content' => 'noindex, nofollow',
-      ),
-    ), 'meta');
+      array(
+        '#tag' => 'meta', 
+        '#attributes' => array(
+          'name' => 'robots', 
+          'content' => 'noindex, nofollow',
+        ),
+      ), 'meta'
+    );
     
     drupal_add_js('/' . $mod_path . '/js/tablesorter/jquery.tablesorter.js', array('scope' => 'header', 'weight' => 8) );
     drupal_add_js('/' . $mod_path . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.js', array('scope' => 'header', 'weight' => 9) );
     drupal_add_css('/' . $mod_path . '/js/tablesorter/addons/pager/jquery.tablesorter.pager.css');
     drupal_add_js('/' . $mod_path . '/js/tablesorter/bbslist.js');
-    
+
     $arrow_path = $mod_path . "/images/arrows/";
     $arrow = array(
       'first' => $arrow_path . 'first-32.png',
@@ -431,20 +444,18 @@ function bbs_scene_block_view($delta = '') {
       'prev'  => $arrow_path . 'prev-32.png'
     );
 
-		$block['subject'] = t('bbs-scene.org BBSList');
-		$block['content'] = theme('bbslist', 
+    $block['subject'] = t('bbs-scene.org BBSList');
+    $block['content'] = theme('bbslist', 
       array(
         'entries' => $bbs->bbsList(),
         'arrow' => (object) $arrow
       )
     );
-		break;
-  }
+    break;
+
+  endswitch;
 
   return $block;
 
-} // End Class
-
-
-
-
+}
+// End Module
