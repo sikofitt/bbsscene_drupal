@@ -122,7 +122,6 @@ function bbs_scene_menu() {
     'type' => MENU_LOCAL_TASK,
   );
 
-
   return $items;
 }
 
@@ -136,32 +135,32 @@ function bbs_scene_options() {
 
   $form['bbs_scene_email'] = array(
     '#title' => t('bbs-scene.org Login Email'),
-	'#type' => 'textfield',
-	'#description' => t('The email address you use to login to bbs-scene.org'),
-	'#default_value' => variable_get('bbs_scene_email', 'email@bbs-scene.org'),
-	'#required' => TRUE,
+    '#type' => 'textfield',
+    '#description' => t('The email address you use to login to bbs-scene.org'),
+    '#default_value' => variable_get('bbs_scene_email', 'email@bbs-scene.org'),
+    '#required' => TRUE,
   );
 
   $form['bbs_scene_password'] = array(
-	'#title' => t('bbs-scene.org Password'),
-	'#type' => 'password',
-	'#description' => t('The password you use to login to bbs-scene.org'),
-	'#default_value' => variable_get('bbs_scene_password', 'bbs-scene.org password'),
-	'#required' => TRUE,
+    '#title' => t('bbs-scene.org Password'),
+    '#type' => 'password',
+    '#description' => t('The password you use to login to bbs-scene.org'),
+    '#default_value' => variable_get('bbs_scene_password', 'bbs-scene.org password'),
+    '#required' => TRUE,
   );
 
   $form['bbs_scene_onelinerz'] = array(
-	'#title' => t('Number of Onelinerz to Show'),
-	'#type' => 'textfield',
-	'#description' => t('The number of onelinerz you want to retrieve from bbs-scene.org'),
-	'#default_value' => variable_get('bbs_scene_onelinerz', 20),
+    '#title' => t('Number of Onelinerz to Show'),
+    '#type' => 'textfield',
+    '#description' => t('The number of onelinerz you want to retrieve from bbs-scene.org'),
+    '#default_value' => variable_get('bbs_scene_onelinerz', 20),
   );
 
   $form['bbs_scene_random_png_size'] = array(
-	'#title' => t('Size of Random Png'),
-	'#type' => 'textfield',
-	'#description' => t('The size in % of the random png to retrieve from bbs-scene.org'),
-	'#default_value' => variable_get('bbs_scene_random_png_size', 35),
+    '#title' => t('Size of Random Png'),
+    '#type' => 'textfield',
+    '#description' => t('The size in % of the random png to retrieve from bbs-scene.org'),
+    '#default_value' => variable_get('bbs_scene_random_png_size', 35),
   );
 
   // Custom validation to make sure the user is entering numbers.
@@ -169,6 +168,7 @@ function bbs_scene_options() {
   $form['#validate'][] = 'bbs_scene_options_validate';
 
   return system_settings_form($form);
+
 }
 
 /**
