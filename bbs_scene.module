@@ -325,6 +325,7 @@ function bbs_scene_block_view($delta = '') {
   
   if( $no_email || $no_password ):
     drupal_set_message($error_msg, 'error');
+    exit;
   endif;
   
   if( class_exists('_BS') ): // Check that bbs-scene class is loaded.
